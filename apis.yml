@@ -11,12 +11,10 @@ type: Index
 position: Consumer
 access: 3rd-Party
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
-tags:
-  - API
+tags: []
 created: '2025-02-06'
 modified: '2026-03-16'
-url: 
-  https://raw.githubusercontent.com/api-evangelist/lens/refs/heads/main/apis.yml
+url: https://raw.githubusercontent.com/api-evangelist/lens/refs/heads/main/apis.yml
 specificationVersion: '0.19'
 apis:
   - aid: lens:lens
@@ -30,8 +28,7 @@ apis:
       A Swagger UI is also provided for query development and a GitHub repository
       is provided for issue tracking.
     humanURL: ' https://docs.api.lens.org/'
-    tags:
-      - API
+    tags: []
     properties:
       - type: Documentation
         url: ' https://docs.api.lens.org/'
