@@ -1,41 +1,53 @@
 # Lens (lens)
-This service allows you to access the full corpus of Lens scholarly works and patent using the flexibility and convenience of a REST API. The versioned API allows you to perform and combine several types of searches using a number of different operations. This API documentation provides guidelines for getting you started with the API and details the request/response schema with examples. A Swagger UI is also provided for query development and a GitHub repository is provided for issue tracking. 
 
-**URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-evangelist/lens/refs/heads/main/apis.yml)
+Lens is an open knowledge platform from Cambia that aggregates global scholarly works and patent records and exposes them through a REST API. The versioned API supports rich Elasticsearch-style queries, cursor pagination, and field projection across the full Lens scholarly and patent corpora, enabling research, science policy, technology landscape, and patent intelligence applications.
+
+**APIs.json:** [apis.yml](apis.yml)
 
 ## Scope
 
-- **Type:** Index 
-- **Position:** Consuming 
-- **Access:** 3rd-Party 
+- **Type:** Index
+- **Position:** Consumer
+- **Access:** 3rd-Party
 
-## Tags:
+## Tags
 
- - API
+- Scholarly
+- Patents
+- Research
+- Science
+- Open Data
 
 ## Timestamps
 
-- **Created:** 2025-02-06 
-- **Modified:** 2026-03-16 
+- **Created:** 2025-02-06
+- **Modified:** 2026-04-28
 
 ## APIs
 
-### Lens
-This service allows you to access the full corpus of Lens scholarly works and patent using the flexibility and convenience of a REST API. The versioned API allows you to perform and combine several types of searches using a number of different operations. This API documentation provides guidelines for getting you started with the API and details the request/response schema with examples. A Swagger UI is also provided for query development and a GitHub repository is provided for issue tracking. 
+### Lens API
 
-**Human URL:** [ https://docs.api.lens.org/]( https://docs.api.lens.org/)
+The Lens API exposes the full corpus of Lens scholarly works and patents via a REST interface. Search endpoints accept Elasticsearch-style query DSL via POST or simple Lucene query strings via GET, with cursor-based pagination, field projection, sorting, stemming controls, and patent family grouping. Authentication is via a bearer token issued from the Lens user profile.
 
+- **Base URL:** https://api.lens.org
+- **Documentation:** https://docs.api.lens.org/
+- **Swagger UI:** https://api.lens.org/swagger-ui.html
+- **OpenAPI:** [openapi/lens-openapi.yml](openapi/lens-openapi.yml)
 
-#### Tags:
+#### Tags
 
- - API
+- Scholarly, Patents, Search, Research
 
-#### Properties
+## Common Properties
 
-- [Documentation]( https://docs.api.lens.org/)
+- [Website](https://www.lens.org/)
+- [Documentation](https://docs.api.lens.org/)
+- [Plans](https://www.lens.org/lens/user/subscriptions)
+- [About](https://www.lens.org/lens/about)
+- [TermsOfService](https://www.lens.org/lens/terms-and-conditions)
+- [PrivacyPolicy](https://www.lens.org/lens/privacy-policy)
 
 ## Maintainers
 
-**FN:** Kin Lane
-
-**Email:** kin@apievangelist.com
+- **FN:** Kin Lane
+- **Email:** kin@apievangelist.com
