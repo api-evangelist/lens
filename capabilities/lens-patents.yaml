@@ -1,0 +1,182 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Lens API — Patents
+  description: 'Lens API — Patents. 3 operations. Lead operation: Search patents (GET). Self-contained Naftiko capability
+    covering one Lens business surface.'
+  tags:
+  - Lens
+  - Patents
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    LENS_API_KEY: LENS_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: lens-patents
+    baseUri: https://api.lens.org
+    description: Lens API — Patents business capability. Self-contained, no shared references.
+    resources:
+    - name: patent-search
+      path: /patent/search
+      operations:
+      - name: get
+        method: GET
+        description: Search patents (GET)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: query
+          in: query
+          type: string
+          description: Lucene-style query string.
+          required: true
+        - name: size
+          in: query
+          type: integer
+        - name: from
+          in: query
+          type: integer
+        - name: sort
+          in: query
+          type: string
+        - name: include
+          in: query
+          type: string
+        - name: exclude
+          in: query
+          type: string
+      - name: post
+        method: POST
+        description: Search patents (POST)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: patent-lens_id
+      path: /patent/{lens_id}
+      operations:
+      - name: get
+        method: GET
+        description: Get a patent by Lens ID
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: lens_id
+          in: path
+          type: string
+          description: Unique Lens identifier for the patent record.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.LENS_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: lens-patents-rest
+    port: 8080
+    description: REST adapter for Lens API — Patents. One Spectral-compliant resource per consumed operation, prefixed with
+      /v1.
+    resources:
+    - path: /v1/patent/search
+      name: patent-search
+      description: REST surface for patent-search.
+      operations:
+      - method: GET
+        name: get
+        description: Search patents (GET)
+        call: lens-patents.get
+        with:
+          query: rest.query
+          size: rest.size
+          from: rest.from
+          sort: rest.sort
+          include: rest.include
+          exclude: rest.exclude
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: post
+        description: Search patents (POST)
+        call: lens-patents.post
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/patent/{lens-id}
+      name: patent-lens-id
+      description: REST surface for patent-lens_id.
+      operations:
+      - method: GET
+        name: get
+        description: Get a patent by Lens ID
+        call: lens-patents.get
+        with:
+          lens_id: rest.lens_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: lens-patents-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Lens API — Patents. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: search-patents-get
+      description: Search patents (GET)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: lens-patents.get
+      with:
+        query: tools.query
+        size: tools.size
+        from: tools.from
+        sort: tools.sort
+        include: tools.include
+        exclude: tools.exclude
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: search-patents-post
+      description: Search patents (POST)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: lens-patents.post
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-patent-lens-id
+      description: Get a patent by Lens ID
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: lens-patents.get
+      with:
+        lens_id: tools.lens_id
+      outputParameters:
+      - type: object
+        mapping: $.
