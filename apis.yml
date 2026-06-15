@@ -1,9 +1,10 @@
 aid: lens
 name: Lens
-description: Lens is an open knowledge platform from Cambia that aggregates global scholarly works and patent records and
-  exposes them through a REST API. The versioned API supports rich Elasticsearch-style queries, cursor pagination, and field
-  projection across the full Lens scholarly and patent corpora, enabling research, science policy, technology landscape, and
-  patent intelligence applications.
+description: >-
+  Lens is an open knowledge platform from Cambia that aggregates global scholarly works and patent records and exposes
+  them through a REST API. The versioned API supports rich Elasticsearch-style queries, cursor pagination, and field
+  projection across the full Lens scholarly and patent corpora, enabling research, science policy, technology landscape,
+  and patent intelligence applications.
 type: Index
 position: Consumer
 access: 3rd-Party
@@ -21,28 +22,25 @@ specificationVersion: '0.19'
 apis:
   - aid: lens:lens-api
     name: Lens API
-    description: The Lens API exposes the full corpus of Lens scholarly works and patents via a REST interface. Search endpoints
-      accept Elasticsearch-style query DSL via POST or simple Lucene query strings via GET, with cursor-based pagination, field
-      projection, sorting, stemming controls, and patent family grouping. Authentication is via a bearer token issued from the
-      Lens user profile.
+    description: >-
+      The Lens API exposes the full corpus of Lens scholarly works and patents via a REST interface. Search endpoints
+      accept Elasticsearch-style query DSL via POST or simple Lucene query strings via GET, with cursor-based
+      pagination, field projection, sorting, stemming controls, and patent family grouping. Authentication is via a
+      bearer token issued from the Lens user profile.
     humanURL: https://docs.api.lens.org/
     baseURL: https://api.lens.org
     tags:
-    - Scholarly
-    - Patents
-    - Search
-    - Research
+      - Scholarly
+      - Patents
+      - Search
+      - Research
     properties:
-    - url: https://docs.api.lens.org/
-      type: Documentation
-    - url: https://api.lens.org/swagger-ui.html
-      type: SwaggerUI
-    - url: openapi/lens-openapi.yml
-      type: OpenAPI
-    - type: NaftikoCapability
-      url: capabilities/lens-patents.yaml
-    - type: NaftikoCapability
-      url: capabilities/lens-scholarly.yaml
+      - url: https://docs.api.lens.org/
+        type: Documentation
+      - url: https://api.lens.org/swagger-ui.html
+        type: SwaggerUI
+      - url: openapi/lens-openapi.yml
+        type: OpenAPI
 common:
   - type: GitHubOrganization
     url: https://github.com/lensapp

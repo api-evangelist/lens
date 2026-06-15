@@ -1,0 +1,193 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lens API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Scholarly",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search scholarly works (GET)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lens.org/scholarly/search",
+            "params": [
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Lucene-style query string (e.g. \"title:graphene AND year:2024\")."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "Number of records per page (max 1000 for Patents/Scholarly subject to plan)."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Offset for offset/size pagination. Cannot exceed 10000 in total."
+              },
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated sort directives (e.g. \"desc(patent_citation_count)\")."
+              },
+              {
+                "name": "include",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to include in the response."
+              },
+              {
+                "name": "exclude",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to exclude from the response."
+              }
+            ]
+          },
+          "docs": "Search the Lens scholarly works index using URL query parameters. Suitable for simple keyword searches and small result sets. Use the POST variant for complex queries and cursor pagination."
+        },
+        {
+          "info": {
+            "name": "Search scholarly works (POST)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lens.org/scholarly/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Submit a structured Elasticsearch-style query against the Lens scholarly works index. Supports term, terms, match, match_phrase, range, bool, and query_string queries, plus cursor-based pagination via the `scroll` and `scroll_id` parameters."
+        },
+        {
+          "info": {
+            "name": "Get a scholarly work by Lens ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lens.org/scholarly/:lens_id",
+            "params": [
+              {
+                "name": "lens_id",
+                "value": "",
+                "type": "path",
+                "description": "Unique Lens identifier for the scholarly work."
+              }
+            ]
+          },
+          "docs": "Retrieve a single scholarly work by its unique Lens identifier."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Patents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search patents (GET)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lens.org/patent/search",
+            "params": [
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Lucene-style query string."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "include",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "exclude",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Search the Lens patents index using URL query parameters. Use the POST variant for complex Boolean queries, cursor pagination, family grouping, and stemming controls."
+        },
+        {
+          "info": {
+            "name": "Search patents (POST)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lens.org/patent/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Submit a structured query against the Lens patents index. Supports the full Elasticsearch-style query DSL plus patent-specific parameters such as `group_by` and `expand_by` for patent family operations, `stemming`, `language`, `regex`, and `min_score`."
+        },
+        {
+          "info": {
+            "name": "Get a patent by Lens ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lens.org/patent/:lens_id",
+            "params": [
+              {
+                "name": "lens_id",
+                "value": "",
+                "type": "path",
+                "description": "Unique Lens identifier for the patent record."
+              }
+            ]
+          },
+          "docs": "Retrieve a single patent record by its unique Lens identifier."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
