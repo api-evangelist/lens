@@ -42,6 +42,8 @@ apis:
       - url: openapi/lens-openapi.yml
         type: OpenAPI
 common:
+  - type: AgenticAccess
+    url: agentic-access/lens-agentic-access.yml
   - type: DomainSecurity
     url: security/lens-domain-security.yml
   - type: Authentication
