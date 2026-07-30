@@ -6,9 +6,22 @@ description: >-
   projection across the full Lens scholarly and patent corpora, enabling research, science policy, technology landscape,
   and patent intelligence applications.
 type: Index
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 position: Consumer
 access: 3rd-Party
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/lens.png
 tags:
   - Scholarly
   - Patents
@@ -20,27 +33,34 @@ created: '2025-02-06'
 modified: '2026-05-19'
 specificationVersion: '0.19'
 apis:
-  - aid: lens:lens-api
-    name: Lens API
-    description: >-
-      The Lens API exposes the full corpus of Lens scholarly works and patents via a REST interface. Search endpoints
-      accept Elasticsearch-style query DSL via POST or simple Lucene query strings via GET, with cursor-based
-      pagination, field projection, sorting, stemming controls, and patent family grouping. Authentication is via a
-      bearer token issued from the Lens user profile.
-    humanURL: https://docs.api.lens.org/
-    baseURL: https://api.lens.org
-    tags:
-      - Scholarly
-      - Patents
-      - Search
-      - Research
-    properties:
-      - url: https://docs.api.lens.org/
-        type: Documentation
-      - url: https://api.lens.org/swagger-ui.html
-        type: SwaggerUI
-      - url: openapi/lens-openapi.yml
-        type: OpenAPI
+- aid: lens:lens-patents-api
+  name: Lens Patents API
+  description: Search and retrieve global patent records.
+  humanURL: https://docs.api.lens.org/
+  baseURL: https://api.lens.org
+  tags:
+  - Patents
+  properties:
+  - type: OpenAPI
+    url: openapi/lens-patents-api-openapi.yml
+  - type: Documentation
+    url: https://docs.api.lens.org/
+  - type: SwaggerUI
+    url: https://api.lens.org/swagger-ui.html
+- aid: lens:lens-scholarly-api
+  name: Lens Scholarly API
+  description: Search and retrieve scholarly works.
+  humanURL: https://docs.api.lens.org/
+  baseURL: https://api.lens.org
+  tags:
+  - Scholarly
+  properties:
+  - type: OpenAPI
+    url: openapi/lens-scholarly-api-openapi.yml
+  - type: Documentation
+    url: https://docs.api.lens.org/
+  - type: SwaggerUI
+    url: https://api.lens.org/swagger-ui.html
 common:
   - type: AgenticAccess
     url: agentic-access/lens-agentic-access.yml
