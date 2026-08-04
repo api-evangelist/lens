@@ -1,0 +1,16 @@
+{
+  "provider": "lens",
+  "sources": [
+    "lens-patents-api-openapi.yml",
+    "lens-scholarly-api-openapi.yml"
+  ],
+  "outputs": [
+    "lens-patents-api-openapi.yml",
+    "lens-scholarly-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

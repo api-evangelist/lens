@@ -1,0 +1,477 @@
+openapi: 3.0.3
+info:
+  title: Lens API
+  description: >-
+    The Lens API provides programmatic access to the full corpus of Lens
+    scholarly works and patents using a REST interface. The API supports rich
+    Elasticsearch-style query DSL for searching scholarly publications and
+    global patent records, with cursor-based pagination, sorting, and field
+    projection. Authentication is via a bearer token issued from the Lens
+    user profile.
+  version: '1.0'
+  contact:
+    name: Lens API Support
+    url: https://docs.api.lens.org/
+  license:
+    name: Lens API Terms
+    url: https://www.lens.org/lens/terms-and-conditions
+servers:
+  - url: https://api.lens.org
+    description: Lens production API
+tags:
+  - name: Scholarly
+    description: Search and retrieve scholarly works.
+  - name: Patents
+    description: Search and retrieve global patent records.
+security:
+  - bearerAuth: []
+paths:
+  /scholarly/search:
+    get:
+      tags:
+        - Scholarly
+      summary: Search scholarly works (GET)
+      description: >-
+        Search the Lens scholarly works index using URL query parameters.
+        Suitable for simple keyword searches and small result sets. Use the
+        POST variant for complex queries and cursor pagination.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Lucene-style query string (e.g. "title:graphene AND year:2024").
+          schema:
+            type: string
+        - name: size
+          in: query
+          description: Number of records per page (max 1000 for Patents/Scholarly subject to plan).
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+        - name: from
+          in: query
+          description: Offset for offset/size pagination. Cannot exceed 10000 in total.
+          schema:
+            type: integer
+            default: 0
+        - name: sort
+          in: query
+          description: Comma-separated sort directives (e.g. "desc(patent_citation_count)").
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: Comma-separated list of fields to include in the response.
+          schema:
+            type: string
+        - name: exclude
+          in: query
+          description: Comma-separated list of fields to exclude from the response.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScholarlyResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+    post:
+      tags:
+        - Scholarly
+      summary: Search scholarly works (POST)
+      description: >-
+        Submit a structured Elasticsearch-style query against the Lens
+        scholarly works index. Supports term, terms, match, match_phrase,
+        range, bool, and query_string queries, plus cursor-based pagination
+        via the `scroll` and `scroll_id` parameters.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScholarlyRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScholarlyResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /scholarly/{lens_id}:
+    get:
+      tags:
+        - Scholarly
+      summary: Get a scholarly work by Lens ID
+      description: Retrieve a single scholarly work by its unique Lens identifier.
+      parameters:
+        - name: lens_id
+          in: path
+          required: true
+          description: Unique Lens identifier for the scholarly work.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScholarlyWork'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /patent/search:
+    get:
+      tags:
+        - Patents
+      summary: Search patents (GET)
+      description: >-
+        Search the Lens patents index using URL query parameters. Use the POST
+        variant for complex Boolean queries, cursor pagination, family grouping,
+        and stemming controls.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Lucene-style query string.
+          schema:
+            type: string
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: from
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: include
+          in: query
+          schema:
+            type: string
+        - name: exclude
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+    post:
+      tags:
+        - Patents
+      summary: Search patents (POST)
+      description: >-
+        Submit a structured query against the Lens patents index. Supports the
+        full Elasticsearch-style query DSL plus patent-specific parameters
+        such as `group_by` and `expand_by` for patent family operations,
+        `stemming`, `language`, `regex`, and `min_score`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatentRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /patent/{lens_id}:
+    get:
+      tags:
+        - Patents
+      summary: Get a patent by Lens ID
+      description: Retrieve a single patent record by its unique Lens identifier.
+      parameters:
+        - name: lens_id
+          in: path
+          required: true
+          description: Unique Lens identifier for the patent record.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatentRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: API token issued from the Lens user profile (Plans & Tokens).
+  responses:
+    BadRequest:
+      description: Malformed request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Record not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Plan quota or rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
+    SearchRequestBase:
+      type: object
+      properties:
+        query:
+          description: Elasticsearch-style query DSL object.
+          type: object
+          additionalProperties: true
+        sort:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        include:
+          type: array
+          items:
+            type: string
+        exclude:
+          type: array
+          items:
+            type: string
+        size:
+          type: integer
+          default: 20
+        from:
+          type: integer
+          default: 0
+        scroll:
+          type: string
+          description: Lifespan for cursor-based pagination (e.g. "1m").
+        scroll_id:
+          type: string
+          description: Cursor returned by a previous response for pagination.
+        min_score:
+          type: number
+        stemming:
+          type: boolean
+          default: true
+        regex:
+          type: boolean
+          default: false
+      required:
+        - query
+    ScholarlyRequest:
+      allOf:
+        - $ref: '#/components/schemas/SearchRequestBase'
+    PatentRequest:
+      allOf:
+        - $ref: '#/components/schemas/SearchRequestBase'
+        - type: object
+          properties:
+            group_by:
+              type: string
+              description: Group results by patent family (e.g. "family").
+            expand_by:
+              type: string
+            language:
+              type: string
+              description: Language code for multi-lingual matching.
+    SearchResponseBase:
+      type: object
+      properties:
+        total:
+          type: integer
+        results:
+          type: integer
+        scroll_id:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    ScholarlyResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchResponseBase'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ScholarlyWork'
+    PatentResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchResponseBase'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/PatentRecord'
+    ScholarlyWork:
+      type: object
+      description: A scholarly work record (Lens scholarly schema v1.6.8).
+      properties:
+        lens_id:
+          type: string
+        publication_type:
+          type: string
+        title:
+          type: string
+        publication_year:
+          type: integer
+        authors:
+          type: array
+          items:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              orcid:
+                type: string
+        source:
+          type: object
+          properties:
+            title:
+              type: string
+            issn:
+              type: array
+              items:
+                type: string
+            publisher:
+              type: string
+        external_ids:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              value:
+                type: string
+        abstract:
+          type: string
+        scholarly_citations_count:
+          type: integer
+        patent_citations_count:
+          type: integer
+    PatentRecord:
+      type: object
+      description: A patent record (Lens patent schema v1.6.5).
+      properties:
+        lens_id:
+          type: string
+        jurisdiction:
+          type: string
+        doc_number:
+          type: string
+        kind:
+          type: string
+        date_published:
+          type: string
+          format: date
+        publication_type:
+          type: string
+        biblio:
+          type: object
+          properties:
+            invention_title:
+              type: array
+              items:
+                type: object
+                properties:
+                  text:
+                    type: string
+                  lang:
+                    type: string
+            parties:
+              type: object
+              properties:
+                applicants:
+                  type: array
+                  items:
+                    type: object
+                inventors:
+                  type: array
+                  items:
+                    type: object
+            classifications_ipcr:
+              type: array
+              items:
+                type: object
+            classifications_cpc:
+              type: array
+              items:
+                type: object
+        abstract:
+          type: array
+          items:
+            type: object
+        claims:
+          type: array
+          items:
+            type: object
+        families:
+          type: object
