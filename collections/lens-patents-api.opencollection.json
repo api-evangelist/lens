@@ -1,0 +1,102 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lens Patents API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Patents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search patents (GET)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lens.org/patent/search",
+            "params": [
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Lucene-style query string."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "include",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "exclude",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Search the Lens patents index using URL query parameters. Use the POST variant for complex Boolean queries, cursor pagination, family grouping, and stemming controls."
+        },
+        {
+          "info": {
+            "name": "Search patents (POST)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lens.org/patent/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Submit a structured query against the Lens patents index. Supports the full Elasticsearch-style query DSL plus patent-specific parameters such as `group_by` and `expand_by` for patent family operations, `stemming`, `language`, `regex`, and `min_score`."
+        },
+        {
+          "info": {
+            "name": "Get a patent by Lens ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lens.org/patent/:lens_id",
+            "params": [
+              {
+                "name": "lens_id",
+                "value": "",
+                "type": "path",
+                "description": "Unique Lens identifier for the patent record."
+              }
+            ]
+          },
+          "docs": "Retrieve a single patent record by its unique Lens identifier."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

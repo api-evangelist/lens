@@ -1,0 +1,847 @@
+{
+  "item": [
+    {
+      "id": "04a8f686-08fe-4274-acd2-fcbdd4a279d5",
+      "name": "Scholarly",
+      "description": {
+        "content": "Search and retrieve scholarly works.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5914b740-eb5f-465f-85fb-9cd8ef212ad4",
+          "name": "Search scholarly works (GET)",
+          "request": {
+            "name": "Search scholarly works (GET)",
+            "description": {
+              "content": "Search the Lens scholarly works index using URL query parameters. Suitable for simple keyword searches and small result sets. Use the POST variant for complex queries and cursor pagination.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "scholarly",
+                "search"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "query",
+                  "value": "<string>",
+                  "description": "(Required) Lucene-style query string (e.g. \"title:graphene AND year:2024\")."
+                },
+                {
+                  "disabled": false,
+                  "key": "size",
+                  "value": "20",
+                  "description": "Number of records per page (max 1000 for Patents/Scholarly subject to plan)."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "0",
+                  "description": "Offset for offset/size pagination. Cannot exceed 10000 in total."
+                },
+                {
+                  "disabled": false,
+                  "key": "sort",
+                  "value": "<string>",
+                  "description": "Comma-separated sort directives (e.g. \"desc(patent_citation_count)\")."
+                },
+                {
+                  "disabled": false,
+                  "key": "include",
+                  "value": "<string>",
+                  "description": "Comma-separated list of fields to include in the response."
+                },
+                {
+                  "disabled": false,
+                  "key": "exclude",
+                  "value": "<string>",
+                  "description": "Comma-separated list of fields to exclude from the response."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "0bfbc23a-4648-4e81-819b-463d4e868b71",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "size",
+                      "value": "20"
+                    },
+                    {
+                      "key": "from",
+                      "value": "0"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "include",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "exclude",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"total\": 3327,\n  \"results\": 6383,\n  \"scroll_id\": \"string\",\n  \"data\": [\n    {\n      \"lens_id\": \"string\",\n      \"publication_type\": \"string\",\n      \"title\": \"string\",\n      \"publication_year\": 7350,\n      \"authors\": [\n        {\n          \"first_name\": \"string\",\n          \"last_name\": \"string\",\n          \"orcid\": \"string\"\n        },\n        {\n          \"first_name\": \"string\",\n          \"last_name\": \"string\",\n          \"orcid\": \"string\"\n        }\n      ],\n      \"source\": {\n        \"title\": \"string\",\n        \"issn\": [\n          \"string\",\n          \"string\"\n        ],\n        \"publisher\": \"string\"\n      },\n      \"external_ids\": [\n        {\n          \"type\": \"string\",\n          \"value\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"value\": \"string\"\n        }\n      ],\n      \"abstract\": \"string\",\n      \"scholarly_citations_count\": 1344,\n      \"patent_citations_count\": 232\n    },\n    {\n      \"lens_id\": \"string\",\n      \"publication_type\": \"string\",\n      \"title\": \"string\",\n      \"publication_year\": 4088,\n      \"authors\": [\n        {\n          \"first_name\": \"string\",\n          \"last_name\": \"string\",\n          \"orcid\": \"string\"\n        },\n        {\n          \"first_name\": \"string\",\n          \"last_name\": \"string\",\n          \"orcid\": \"string\"\n        }\n      ],\n      \"source\": {\n        \"title\": \"string\",\n        \"issn\": [\n          \"string\",\n          \"string\"\n        ],\n        \"publisher\": \"string\"\n      },\n      \"external_ids\": [\n        {\n          \"type\": \"string\",\n          \"value\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"value\": \"string\"\n        }\n      ],\n      \"abstract\": \"string\",\n      \"scholarly_citations_count\": 7516,\n      \"patent_citations_count\": 2992\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5cda1394-1cb6-423b-a2cd-3aa376159fa4",
+              "name": "Malformed request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "size",
+                      "value": "20"
+                    },
+                    {
+                      "key": "from",
+                      "value": "0"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "include",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "exclude",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"code\": 8988\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "32da06ff-3b41-4d7c-8fb5-49d876a466b6",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "size",
+                      "value": "20"
+                    },
+                    {
+                      "key": "from",
+                      "value": "0"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "include",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "exclude",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"code\": 8988\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9d53c8d5-150c-4bcd-9cae-11ca791707ec",
+              "name": "Plan quota or rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "size",
+                      "value": "20"
+                    },
+                    {
+                      "key": "from",
+                      "value": "0"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "include",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "exclude",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"code\": 8988\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6867e243-5777-475f-87d2-8c25e96149e2",
+          "name": "Search scholarly works (POST)",
+          "request": {
+            "name": "Search scholarly works (POST)",
+            "description": {
+              "content": "Submit a structured Elasticsearch-style query against the Lens scholarly works index. Supports term, terms, match, match_phrase, range, bool, and query_string queries, plus cursor-based pagination via the `scroll` and `scroll_id` parameters.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "scholarly",
+                "search"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": {\n    \"key_0\": 4775.029769672165\n  },\n  \"sort\": [\n    {\n      \"key_0\": 9675,\n      \"key_1\": 9741\n    },\n    {\n      \"key_0\": 5218.538999579968,\n      \"key_1\": \"string\"\n    }\n  ],\n  \"include\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"exclude\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"size\": 20,\n  \"from\": 0,\n  \"scroll\": \"<string>\",\n  \"scroll_id\": \"<string>\",\n  \"min_score\": \"<number>\",\n  \"stemming\": true,\n  \"regex\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1344f322-804a-4f83-aca6-28427454f0bd",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": {\n    \"key_0\": \"string\",\n    \"key_1\": 964.9821643252909,\n    \"key_2\": \"string\",\n    \"key_3\": true\n  },\n  \"sort\": [\n    {\n      \"key_0\": 932.1130752885476,\n      \"key_1\": 8617\n    },\n    {\n      \"key_0\": 684\n    }\n  ],\n  \"include\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"exclude\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"size\": 20,\n  \"from\": 0,\n  \"scroll\": \"<string>\",\n  \"scroll_id\": \"<string>\",\n  \"min_score\": \"<number>\",\n  \"stemming\": true,\n  \"regex\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"total\": 4679,\n  \"results\": 3208,\n  \"scroll_id\": \"string\",\n  \"data\": [\n    {\n      \"lens_id\": \"string\",\n      \"publication_type\": \"string\",\n      \"title\": \"string\",\n      \"publication_year\": 1947,\n      \"authors\": [\n        {\n          \"first_name\": \"string\",\n          \"last_name\": \"string\",\n          \"orcid\": \"string\"\n        },\n        {\n          \"first_name\": \"string\",\n          \"last_name\": \"string\",\n          \"orcid\": \"string\"\n        }\n      ],\n      \"source\": {\n        \"title\": \"string\",\n        \"issn\": [\n          \"string\",\n          \"string\"\n        ],\n        \"publisher\": \"string\"\n      },\n      \"external_ids\": [\n        {\n          \"type\": \"string\",\n          \"value\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"value\": \"string\"\n        }\n      ],\n      \"abstract\": \"string\",\n      \"scholarly_citations_count\": 615,\n      \"patent_citations_count\": 4743\n    },\n    {\n      \"lens_id\": \"string\",\n      \"publication_type\": \"string\",\n      \"title\": \"string\",\n      \"publication_year\": 7673,\n      \"authors\": [\n        {\n          \"first_name\": \"string\",\n          \"last_name\": \"string\",\n          \"orcid\": \"string\"\n        },\n        {\n          \"first_name\": \"string\",\n          \"last_name\": \"string\",\n          \"orcid\": \"string\"\n        }\n      ],\n      \"source\": {\n        \"title\": \"string\",\n        \"issn\": [\n          \"string\",\n          \"string\"\n        ],\n        \"publisher\": \"string\"\n      },\n      \"external_ids\": [\n        {\n          \"type\": \"string\",\n          \"value\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"value\": \"string\"\n        }\n      ],\n      \"abstract\": \"string\",\n      \"scholarly_citations_count\": 2023,\n      \"patent_citations_count\": 5745,\n      \"key_0\": \"string\",\n      \"key_1\": true\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9dc79a16-673a-4972-be7e-3bc2df7abc5c",
+              "name": "Malformed request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": {\n    \"key_0\": \"string\",\n    \"key_1\": 964.9821643252909,\n    \"key_2\": \"string\",\n    \"key_3\": true\n  },\n  \"sort\": [\n    {\n      \"key_0\": 932.1130752885476,\n      \"key_1\": 8617\n    },\n    {\n      \"key_0\": 684\n    }\n  ],\n  \"include\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"exclude\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"size\": 20,\n  \"from\": 0,\n  \"scroll\": \"<string>\",\n  \"scroll_id\": \"<string>\",\n  \"min_score\": \"<number>\",\n  \"stemming\": true,\n  \"regex\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"code\": 8988\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "993225cd-8082-4dde-ac45-2aaa6c0ac93d",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": {\n    \"key_0\": \"string\",\n    \"key_1\": 964.9821643252909,\n    \"key_2\": \"string\",\n    \"key_3\": true\n  },\n  \"sort\": [\n    {\n      \"key_0\": 932.1130752885476,\n      \"key_1\": 8617\n    },\n    {\n      \"key_0\": 684\n    }\n  ],\n  \"include\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"exclude\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"size\": 20,\n  \"from\": 0,\n  \"scroll\": \"<string>\",\n  \"scroll_id\": \"<string>\",\n  \"min_score\": \"<number>\",\n  \"stemming\": true,\n  \"regex\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"code\": 8988\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "27ce75b8-13c2-425b-a9d2-62212a456c9c",
+              "name": "Plan quota or rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": {\n    \"key_0\": \"string\",\n    \"key_1\": 964.9821643252909,\n    \"key_2\": \"string\",\n    \"key_3\": true\n  },\n  \"sort\": [\n    {\n      \"key_0\": 932.1130752885476,\n      \"key_1\": 8617\n    },\n    {\n      \"key_0\": 684\n    }\n  ],\n  \"include\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"exclude\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"size\": 20,\n  \"from\": 0,\n  \"scroll\": \"<string>\",\n  \"scroll_id\": \"<string>\",\n  \"min_score\": \"<number>\",\n  \"stemming\": true,\n  \"regex\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"code\": 8988\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5ac4c9e2-90a2-4efb-8205-7510f2e57b10",
+          "name": "Get a scholarly work by Lens ID",
+          "request": {
+            "name": "Get a scholarly work by Lens ID",
+            "description": {
+              "content": "Retrieve a single scholarly work by its unique Lens identifier.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "scholarly",
+                ":lens_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "lens_id",
+                  "description": "(Required) Unique Lens identifier for the scholarly work."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "587aec52-8d1b-4dcc-b02c-60f60142d9fa",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    ":lens_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lens_id",
+                      "description": "(Required) Unique Lens identifier for the scholarly work."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"lens_id\": \"string\",\n  \"publication_type\": \"string\",\n  \"title\": \"string\",\n  \"publication_year\": 8501,\n  \"authors\": [\n    {\n      \"first_name\": \"string\",\n      \"last_name\": \"string\",\n      \"orcid\": \"string\"\n    },\n    {\n      \"first_name\": \"string\",\n      \"last_name\": \"string\",\n      \"orcid\": \"string\"\n    }\n  ],\n  \"source\": {\n    \"title\": \"string\",\n    \"issn\": [\n      \"string\",\n      \"string\"\n    ],\n    \"publisher\": \"string\"\n  },\n  \"external_ids\": [\n    {\n      \"type\": \"string\",\n      \"value\": \"string\"\n    },\n    {\n      \"type\": \"string\",\n      \"value\": \"string\"\n    }\n  ],\n  \"abstract\": \"string\",\n  \"scholarly_citations_count\": 6156,\n  \"patent_citations_count\": 4234\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6722136e-8425-4431-871f-2e0161b24814",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    ":lens_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lens_id",
+                      "description": "(Required) Unique Lens identifier for the scholarly work."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"code\": 8988\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a46b87f8-0117-4e2b-931a-f04b984a6bca",
+              "name": "Record not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scholarly",
+                    ":lens_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lens_id",
+                      "description": "(Required) Unique Lens identifier for the scholarly work."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"code\": 8988\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lens.org",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "4736105d-0610-4bec-ba8a-6ce099309e5d",
+    "name": "Lens Patents Scholarly API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Lens API provides programmatic access to the full corpus of Lens scholarly works and patents using a REST interface. The API supports rich Elasticsearch-style query DSL for searching scholarly publications and global patent records, with cursor-based pagination, sorting, and field projection. Authentication is via a bearer token issued from the Lens user profile.\n\nContact Support:\n Name: Lens API Support",
+      "type": "text/plain"
+    }
+  }
+}
