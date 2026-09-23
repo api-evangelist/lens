@@ -1,6 +1,6 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Lens Patents Scholarly API
+  title: Lens Scholarly API
   description: The Lens API provides programmatic access to the full corpus of Lens scholarly works and patents using a REST interface. The API supports rich Elasticsearch-style query DSL for searching scholarly publications and global patent records, with cursor-based pagination, sorting, and field projection. Authentication is via a bearer token issued from the Lens user profile.
   version: '1.0'
   contact:
@@ -72,6 +72,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/RateLimited'
+      operationId: getScholarlySearch
+      x-operation-id-source: derived
     post:
       tags:
       - Scholarly
@@ -96,6 +98,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/RateLimited'
+      operationId: postScholarlySearch
+      x-operation-id-source: derived
   /scholarly/{lens_id}:
     get:
       tags:
@@ -120,50 +124,35 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      operationId: getScholarlyByLensId
+      x-operation-id-source: derived
 components:
+  responses:
+    BadRequest:
+      description: Malformed request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Plan quota or rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Record not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    SearchRequestBase:
-      type: object
-      properties:
-        query:
-          description: Elasticsearch-style query DSL object.
-          type: object
-          additionalProperties: true
-        sort:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        include:
-          type: array
-          items:
-            type: string
-        exclude:
-          type: array
-          items:
-            type: string
-        size:
-          type: integer
-          default: 20
-        from:
-          type: integer
-          default: 0
-        scroll:
-          type: string
-          description: Lifespan for cursor-based pagination (e.g. "1m").
-        scroll_id:
-          type: string
-          description: Cursor returned by a previous response for pagination.
-        min_score:
-          type: number
-        stemming:
-          type: boolean
-          default: true
-        regex:
-          type: boolean
-          default: false
-      required:
-      - query
     ScholarlyWork:
       type: object
       description: A scholarly work record (Lens scholarly schema v1.6.8).
@@ -213,6 +202,16 @@ components:
           type: integer
         patent_citations_count:
           type: integer
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
+    ScholarlyRequest:
+      allOf:
+      - $ref: '#/components/schemas/SearchRequestBase'
     SearchResponseBase:
       type: object
       properties:
@@ -227,9 +226,48 @@ components:
           items:
             type: object
             additionalProperties: true
-    ScholarlyRequest:
-      allOf:
-      - $ref: '#/components/schemas/SearchRequestBase'
+    SearchRequestBase:
+      type: object
+      properties:
+        query:
+          description: Elasticsearch-style query DSL object.
+          type: object
+          additionalProperties: true
+        sort:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        include:
+          type: array
+          items:
+            type: string
+        exclude:
+          type: array
+          items:
+            type: string
+        size:
+          type: integer
+          default: 20
+        from:
+          type: integer
+          default: 0
+        scroll:
+          type: string
+          description: Lifespan for cursor-based pagination (e.g. "1m").
+        scroll_id:
+          type: string
+          description: Cursor returned by a previous response for pagination.
+        min_score:
+          type: number
+        stemming:
+          type: boolean
+          default: true
+        regex:
+          type: boolean
+          default: false
+      required:
+      - query
     ScholarlyResponse:
       allOf:
       - $ref: '#/components/schemas/SearchResponseBase'
@@ -239,38 +277,6 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/ScholarlyWork'
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        code:
-          type: integer
-  responses:
-    RateLimited:
-      description: Plan quota or rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid token
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Malformed request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Record not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

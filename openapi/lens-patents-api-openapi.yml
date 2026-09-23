@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Lens Patents API
   description: The Lens API provides programmatic access to the full corpus of Lens scholarly works and patents using a REST interface. The API supports rich Elasticsearch-style query DSL for searching scholarly publications and global patent records, with cursor-based pagination, sorting, and field projection. Authentication is via a bearer token issued from the Lens user profile.
@@ -66,6 +66,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/RateLimited'
+      operationId: getPatentSearch
+      x-operation-id-source: derived
     post:
       tags:
       - Patents
@@ -90,6 +92,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/RateLimited'
+      operationId: postPatentSearch
+      x-operation-id-source: derived
   /patent/{lens_id}:
     get:
       tags:
@@ -114,77 +118,35 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      operationId: getPatentByLensId
+      x-operation-id-source: derived
 components:
+  responses:
+    BadRequest:
+      description: Malformed request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Plan quota or rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Record not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    SearchRequestBase:
-      type: object
-      properties:
-        query:
-          description: Elasticsearch-style query DSL object.
-          type: object
-          additionalProperties: true
-        sort:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        include:
-          type: array
-          items:
-            type: string
-        exclude:
-          type: array
-          items:
-            type: string
-        size:
-          type: integer
-          default: 20
-        from:
-          type: integer
-          default: 0
-        scroll:
-          type: string
-          description: Lifespan for cursor-based pagination (e.g. "1m").
-        scroll_id:
-          type: string
-          description: Cursor returned by a previous response for pagination.
-        min_score:
-          type: number
-        stemming:
-          type: boolean
-          default: true
-        regex:
-          type: boolean
-          default: false
-      required:
-      - query
-    SearchResponseBase:
-      type: object
-      properties:
-        total:
-          type: integer
-        results:
-          type: integer
-        scroll_id:
-          type: string
-        data:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-    PatentRequest:
-      allOf:
-      - $ref: '#/components/schemas/SearchRequestBase'
-      - type: object
-        properties:
-          group_by:
-            type: string
-            description: Group results by patent family (e.g. "family").
-          expand_by:
-            type: string
-          language:
-            type: string
-            description: Language code for multi-lingual matching.
     PatentRecord:
       type: object
       description: A patent record (Lens patent schema v1.6.5).
@@ -250,6 +212,19 @@ components:
           type: string
         code:
           type: integer
+    PatentRequest:
+      allOf:
+      - $ref: '#/components/schemas/SearchRequestBase'
+      - type: object
+        properties:
+          group_by:
+            type: string
+            description: Group results by patent family (e.g. "family").
+          expand_by:
+            type: string
+          language:
+            type: string
+            description: Language code for multi-lingual matching.
     PatentResponse:
       allOf:
       - $ref: '#/components/schemas/SearchResponseBase'
@@ -259,31 +234,62 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/PatentRecord'
-  responses:
-    RateLimited:
-      description: Plan quota or rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid token
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Malformed request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Record not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    SearchResponseBase:
+      type: object
+      properties:
+        total:
+          type: integer
+        results:
+          type: integer
+        scroll_id:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    SearchRequestBase:
+      type: object
+      properties:
+        query:
+          description: Elasticsearch-style query DSL object.
+          type: object
+          additionalProperties: true
+        sort:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        include:
+          type: array
+          items:
+            type: string
+        exclude:
+          type: array
+          items:
+            type: string
+        size:
+          type: integer
+          default: 20
+        from:
+          type: integer
+          default: 0
+        scroll:
+          type: string
+          description: Lifespan for cursor-based pagination (e.g. "1m").
+        scroll_id:
+          type: string
+          description: Cursor returned by a previous response for pagination.
+        min_score:
+          type: number
+        stemming:
+          type: boolean
+          default: true
+        regex:
+          type: boolean
+          default: false
+      required:
+      - query
   securitySchemes:
     bearerAuth:
       type: http
