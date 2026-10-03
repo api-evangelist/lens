@@ -121,6 +121,31 @@ paths:
       operationId: getPatentByLensId
       x-operation-id-source: derived
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Malformed request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Plan quota or rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Record not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     SearchRequestBase:
       type: object
@@ -164,29 +189,6 @@ components:
           default: false
       required:
       - query
-    SearchResponseBase:
-      type: object
-      properties:
-        total:
-          type: integer
-        results:
-          type: integer
-        scroll_id:
-          type: string
-        data:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-    PatentResponse:
-      allOf:
-      - $ref: '#/components/schemas/SearchResponseBase'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/PatentRecord'
     PatentRequest:
       allOf:
       - $ref: '#/components/schemas/SearchRequestBase'
@@ -200,6 +202,15 @@ components:
           language:
             type: string
             description: Language code for multi-lingual matching.
+    PatentResponse:
+      allOf:
+      - $ref: '#/components/schemas/SearchResponseBase'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/PatentRecord'
     Error:
       type: object
       properties:
@@ -265,31 +276,20 @@ components:
             type: object
         families:
           type: object
-  responses:
-    NotFound:
-      description: Record not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    RateLimited:
-      description: Plan quota or rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Malformed request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid token
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    SearchResponseBase:
+      type: object
+      properties:
+        total:
+          type: integer
+        results:
+          type: integer
+        scroll_id:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
   securitySchemes:
     bearerAuth:
       type: http
