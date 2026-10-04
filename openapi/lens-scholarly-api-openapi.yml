@@ -127,32 +127,19 @@ paths:
       operationId: getScholarlyByLensId
       x-operation-id-source: derived
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid token
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Malformed request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    RateLimited:
-      description: Plan quota or rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Record not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    ScholarlyResponse:
+      allOf:
+      - $ref: '#/components/schemas/SearchResponseBase'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/ScholarlyWork'
+    ScholarlyRequest:
+      allOf:
+      - $ref: '#/components/schemas/SearchRequestBase'
     ScholarlyWork:
       type: object
       description: A scholarly work record (Lens scholarly schema v1.6.8).
@@ -202,6 +189,27 @@ components:
           type: integer
         patent_citations_count:
           type: integer
+    SearchResponseBase:
+      type: object
+      properties:
+        total:
+          type: integer
+        results:
+          type: integer
+        scroll_id:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
     SearchRequestBase:
       type: object
       properties:
@@ -244,39 +252,31 @@ components:
           default: false
       required:
       - query
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        code:
-          type: integer
-    ScholarlyRequest:
-      allOf:
-      - $ref: '#/components/schemas/SearchRequestBase'
-    SearchResponseBase:
-      type: object
-      properties:
-        total:
-          type: integer
-        results:
-          type: integer
-        scroll_id:
-          type: string
-        data:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-    ScholarlyResponse:
-      allOf:
-      - $ref: '#/components/schemas/SearchResponseBase'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/ScholarlyWork'
+  responses:
+    RateLimited:
+      description: Plan quota or rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Record not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Malformed request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http
