@@ -79,6 +79,10 @@ apis:
   - type: SwaggerUI
     url: https://api.lens.org/swagger-ui.html
 common:
+  - type: RateLimits
+    url: rate-limits/lens-rate-limits.yml
+  - type: FinOps
+    url: finops/lens-finops.yml
   - type: AgenticAccess
     url: agentic-access/lens-agentic-access.yml
   - type: DomainSecurity
