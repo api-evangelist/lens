@@ -122,6 +122,78 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    SearchRequestBase:
+      type: object
+      properties:
+        query:
+          description: Elasticsearch-style query DSL object.
+          type: object
+          additionalProperties: true
+        sort:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        include:
+          type: array
+          items:
+            type: string
+        exclude:
+          type: array
+          items:
+            type: string
+        size:
+          type: integer
+          default: 20
+        from:
+          type: integer
+          default: 0
+        scroll:
+          type: string
+          description: Lifespan for cursor-based pagination (e.g. "1m").
+        scroll_id:
+          type: string
+          description: Cursor returned by a previous response for pagination.
+        min_score:
+          type: number
+        stemming:
+          type: boolean
+          default: true
+        regex:
+          type: boolean
+          default: false
+      required:
+      - query
+    SearchResponseBase:
+      type: object
+      properties:
+        total:
+          type: integer
+        results:
+          type: integer
+        scroll_id:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    PatentResponse:
+      allOf:
+      - $ref: '#/components/schemas/SearchResponseBase'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/PatentRecord'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
     PatentRecord:
       type: object
       description: A patent record (Lens patent schema v1.6.5).
@@ -180,27 +252,6 @@ components:
             type: object
         families:
           type: object
-    SearchResponseBase:
-      type: object
-      properties:
-        total:
-          type: integer
-        results:
-          type: integer
-        scroll_id:
-          type: string
-        data:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        code:
-          type: integer
     PatentRequest:
       allOf:
       - $ref: '#/components/schemas/SearchRequestBase'
@@ -214,60 +265,9 @@ components:
           language:
             type: string
             description: Language code for multi-lingual matching.
-    SearchRequestBase:
-      type: object
-      properties:
-        query:
-          description: Elasticsearch-style query DSL object.
-          type: object
-          additionalProperties: true
-        sort:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        include:
-          type: array
-          items:
-            type: string
-        exclude:
-          type: array
-          items:
-            type: string
-        size:
-          type: integer
-          default: 20
-        from:
-          type: integer
-          default: 0
-        scroll:
-          type: string
-          description: Lifespan for cursor-based pagination (e.g. "1m").
-        scroll_id:
-          type: string
-          description: Cursor returned by a previous response for pagination.
-        min_score:
-          type: number
-        stemming:
-          type: boolean
-          default: true
-        regex:
-          type: boolean
-          default: false
-      required:
-      - query
-    PatentResponse:
-      allOf:
-      - $ref: '#/components/schemas/SearchResponseBase'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/PatentRecord'
   responses:
-    RateLimited:
-      description: Plan quota or rate limit exceeded
+    BadRequest:
+      description: Malformed request
       content:
         application/json:
           schema:
@@ -278,14 +278,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Malformed request
+    Unauthorized:
+      description: Missing or invalid token
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid token
+    RateLimited:
+      description: Plan quota or rate limit exceeded
       content:
         application/json:
           schema:
