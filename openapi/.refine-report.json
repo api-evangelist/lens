@@ -4,19 +4,20 @@
     "_original/lens-openapi.yml"
   ],
   "outputs": [
+    "lens-bulk-api-openapi.yml",
+    "lens-collections-api-openapi.yml",
     "lens-patents-api-openapi.yml",
     "lens-scholarly-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
-  "warnings": [],
+  "warnings": [
+    "lens-openapi.yml: info.version missing"
+  ],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "lens-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "lens-openapi.yml: upgraded swagger 2.0 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+2 apis, 4 total)"
   ],
-  "skipped": [
-    "lens-patents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "lens-scholarly-api-openapi.yml: previously refined output, superseded by openapi/_original/"
-  ]
+  "skipped": []
 }

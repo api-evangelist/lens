@@ -1,298 +1,519 @@
 openapi: 3.2.0
 info:
+  description: 'This service provides access to the full corpus of Lens scholarly works and Patent documents using the flexibility and convenience of a REST API. The versioned API allows you to combine and perform several search operations to programmatically retrieve results. The API documentation provides guidelines for getting you started with the API and details the request/response schema with examples.
+
+
+    The Lens uses token-based API authentication. You can request access to the Lens Scholarly API, Lens Patent API or PatSeq Bulk Downloads and manage your access tokens from your Lens user profile.'
+  version: ''
   title: Lens Patents API
-  description: The Lens API provides programmatic access to the full corpus of Lens scholarly works and patents using a REST interface. The API supports rich Elasticsearch-style query DSL for searching scholarly publications and global patent records, with cursor-based pagination, sorting, and field projection. Authentication is via a bearer token issued from the Lens user profile.
-  version: '1.0'
-  contact:
-    name: Lens API Support
-    url: https://docs.api.lens.org/
   license:
-    name: Lens API Terms
-    url: https://www.lens.org/lens/terms-and-conditions
-servers:
-- url: https://api.lens.org
-  description: Lens production API
-security:
-- bearerAuth: []
+    name: Terms of Use
+    url: https://about.lens.org/lens-api-terms-of-use/
 tags:
-- name: Patents
-  description: Search and retrieve global patent records.
+- name: patents
+  description: Patent Operations
 paths:
   /patent/search:
+    post:
+      security:
+      - Authorisation: []
+      tags:
+      - patents
+      summary: Search Patent Documents
+      operationId: search_patent
+      responses:
+        '200':
+          description: Valid response from the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatentApiResponse'
+        '204':
+          description: No Content
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatentSearchRequest'
+        description: Search Request Object
+        required: true
     get:
       tags:
-      - Patents
-      summary: Search patents (GET)
-      description: Search the Lens patents index using URL query parameters. Use the POST variant for complex Boolean queries, cursor pagination, family grouping, and stemming controls.
+      - patents
+      summary: Get Patent Documents
+      operationId: search_get_patents
       parameters:
-      - name: query
+      - name: token
         in: query
         required: true
-        description: Lucene-style query string.
+        schema:
+          type: string
+      - name: query
+        in: query
+        description: Search Query (e.g. Fidget Spinner)
+        required: true
         schema:
           type: string
       - name: size
         in: query
+        description: Result size
+        required: false
         schema:
           type: integer
-          default: 20
       - name: from
         in: query
+        description: Offset from the first result
+        required: false
         schema:
           type: integer
-          default: 0
-      - name: sort
-        in: query
-        schema:
-          type: string
       - name: include
         in: query
+        description: Fields to include in response(e.g. biblio,legal_status)
+        required: false
         schema:
           type: string
       - name: exclude
         in: query
+        description: Fields to exclude in response (e.g. families,biblio.application_reference)
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: Sort fields (e.g. desc(date_published),asc(created))
+        required: false
         schema:
           type: string
       responses:
         '200':
-          description: Successful response
+          description: Valid response from the server
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatentResponse'
+                $ref: '#/components/schemas/PatentApiResponse'
+        '204':
+          description: No Content
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Malformed request or incorrect fields/values provided
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
         '429':
-          $ref: '#/components/responses/RateLimited'
-      operationId: getPatentSearch
-      x-operation-id-source: derived
+          description: You have exceeded the number of allowed calls
+  /patent/aggregate:
     post:
+      security:
+      - Authorisation: []
       tags:
-      - Patents
-      summary: Search patents (POST)
-      description: Submit a structured query against the Lens patents index. Supports the full Elasticsearch-style query DSL plus patent-specific parameters such as `group_by` and `expand_by` for patent family operations, `stemming`, `language`, `regex`, and `min_score`.
+      - patents
+      summary: Patent aggregations search
+      operationId: aggregate_patent
+      responses:
+        '200':
+          description: Valid response from the server
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatentRequest'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PatentResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '429':
-          $ref: '#/components/responses/RateLimited'
-      operationId: postPatentSearch
-      x-operation-id-source: derived
-  /patent/{lens_id}:
-    get:
-      tags:
-      - Patents
-      summary: Get a patent by Lens ID
-      description: Retrieve a single patent record by its unique Lens identifier.
-      parameters:
-      - name: lens_id
-        in: path
+              $ref: '#/components/schemas/AggregationRequestPatent'
+        description: Search and Aggregation Request Object
         required: true
-        description: Unique Lens identifier for the patent record.
-        schema:
-          type: string
+  /schema/patent:
+    get:
+      security:
+      - Authorisation: []
+      tags:
+      - patents
+      summary: Get patent response schema
+      operationId: schema_patent
       responses:
         '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PatentRecord'
+          description: Valid response from the server
         '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      operationId: getPatentByLensId
-      x-operation-id-source: derived
+          description: Authentication credentials might be incorrect or missing
 components:
   schemas:
-    SearchRequestBase:
-      type: object
-      properties:
-        query:
-          description: Elasticsearch-style query DSL object.
-          type: object
-          additionalProperties: true
-        sort:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        include:
-          type: array
-          items:
-            type: string
-        exclude:
-          type: array
-          items:
-            type: string
-        size:
-          type: integer
-          default: 20
-        from:
-          type: integer
-          default: 0
-        scroll:
-          type: string
-          description: Lifespan for cursor-based pagination (e.g. "1m").
-        scroll_id:
-          type: string
-          description: Cursor returned by a previous response for pagination.
-        min_score:
-          type: number
-        stemming:
-          type: boolean
-          default: true
-        regex:
-          type: boolean
-          default: false
-      required:
-      - query
-    SearchResponseBase:
+    PatentApiResponse:
       type: object
       properties:
         total:
           type: integer
+          description: Total number of search results exists.
         results:
           type: integer
-        scroll_id:
-          type: string
+          description: Number of results in this response.
         data:
           type: array
+          description: List of Patent Documents
           items:
             type: object
-            additionalProperties: true
-    PatentResponse:
-      allOf:
-      - $ref: '#/components/schemas/SearchResponseBase'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/PatentRecord'
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        code:
-          type: integer
-    PatentRecord:
-      type: object
-      description: A patent record (Lens patent schema v1.6.5).
-      properties:
-        lens_id:
-          type: string
-        jurisdiction:
-          type: string
-        doc_number:
-          type: string
-        kind:
-          type: string
-        date_published:
-          type: string
-          format: date
-        publication_type:
-          type: string
-        biblio:
-          type: object
-          properties:
-            invention_title:
-              type: array
-              items:
+            properties:
+              lens_id:
+                type: string
+              jurisdiction:
+                type: string
+              doc_number:
+                type: number
+              kind:
+                type: string
+              date_published:
+                type: string
+              doc_key:
+                type: string
+              docdb_id:
+                type: number
+              lang:
+                type: string
+              biblio:
+                type: object
+                properties:
+                  publication_reference:
+                    type: object
+                    properties:
+                      jurisdiction:
+                        type: string
+                      doc_number:
+                        type: number
+                      kind:
+                        type: string
+                      date:
+                        type: string
+                  application_reference:
+                    type: object
+                    properties:
+                      jurisdiction:
+                        type: string
+                      doc_number:
+                        type: number
+                      kind:
+                        type: string
+                      date:
+                        type: string
+                      application_reference:
+                        type: string
+                  priority_claims:
+                    type: object
+                    properties:
+                      claims:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            jurisdiction:
+                              type: string
+                            doc_number:
+                              type: number
+                            kind:
+                              type: string
+                            date:
+                              type: string
+                            sequence:
+                              type: integer
+                  invention_title:
+                    type: object
+                    properties:
+                      text:
+                        type: string
+                      lang:
+                        type: string
+                  parties:
+                    type: object
+                    properties:
+                      applicants:
+                        type: object
+                        properties:
+                          residence:
+                            type: string
+                          extracted_name.value:
+                            type: string
+                          extracted_address:
+                            type: string
+                      inventors:
+                        type: object
+                        properties:
+                          residence:
+                            type: string
+                          sequence:
+                            type: string
+                          extracted_name.value:
+                            type: string
+                          extracted_address:
+                            type: string
+                      agents:
+                        type: object
+                        properties:
+                          extracted_name.value:
+                            type: string
+                          extracted_address:
+                            type: string
+                          extracted_country:
+                            type: string
+                      owners_all:
+                        type: object
+                        properties:
+                          recorded_date:
+                            type: string
+                          execution_date:
+                            type: string
+                          extracted_name.value:
+                            type: string
+                          extracted_address:
+                            type: string
+                          extracted_country:
+                            type: string
+                  classifications_ipcr.classifications.symbol:
+                    type: string
+                  classifications_cpc.classifications.symbol:
+                    type: string
+                  classifications_national.classifications.symbol:
+                    type: string
+                  references_cited:
+                    type: object
+                    properties:
+                      citations:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            sequence:
+                              type: string
+                            patcit:
+                              type: object
+                              properties:
+                                document_id:
+                                  type: object
+                                  properties:
+                                    jurisdiction:
+                                      type: string
+                                    doc_number:
+                                      type: number
+                                    kind:
+                                      type: string
+                                    date:
+                                      type: string
+                                patcit.lens_id:
+                                  type: string
+                      nplcit:
+                        type: object
+                        properties:
+                          text:
+                            type: string
+                          lens_id:
+                            type: string
+                          external_ids:
+                            type: array
+                            items:
+                              type: string
+                      npl_resolved_count:
+                        type: string
+                      npl_count:
+                        type: string
+                  cited_by:
+                    type: object
+                    properties:
+                      patents:
+                        type: object
+                        properties:
+                          document_id:
+                            type: object
+                            properties:
+                              jurisdiction:
+                                type: string
+                              doc_number:
+                                type: number
+                              kind:
+                                type: string
+                              date:
+                                type: string
+                          lens_id:
+                            type: string
+              families:
+                type: object
+                properties:
+                  simple_family:
+                    type: object
+                    properties:
+                      members:
+                        type: object
+                        properties:
+                          document_id:
+                            type: object
+                            properties:
+                              jurisdiction:
+                                type: string
+                              doc_number:
+                                type: number
+                              kind:
+                                type: string
+                              date:
+                                type: string
+                          lens_id:
+                            type: string
+                  extended_family:
+                    type: object
+                    properties:
+                      members:
+                        type: object
+                        properties:
+                          document_id:
+                            type: object
+                            properties:
+                              jurisdiction:
+                                type: string
+                              doc_number:
+                                type: number
+                              kind:
+                                type: string
+                              date:
+                                type: string
+                          lens_id:
+                            type: string
+              legal_status:
+                type: object
+                properties:
+                  granted:
+                    type: boolean
+                  grant_date:
+                    type: string
+                  application_expiry_date:
+                    type: string
+                  anticipated_term_date:
+                    type: string
+                  has_disclaimer:
+                    type: boolean
+                  patent_status:
+                    type: string
+                  publication_count:
+                    type: number
+                  has_spc:
+                    type: string
+                  discontinuation_date:
+                    type: string
+                  calculation_log:
+                    type: array
+                    items:
+                      type: string
+              abstract:
                 type: object
                 properties:
                   text:
                     type: string
                   lang:
                     type: string
-            parties:
-              type: object
-              properties:
-                applicants:
-                  type: array
-                  items:
-                    type: object
-                inventors:
-                  type: array
-                  items:
-                    type: object
-            classifications_ipcr:
-              type: array
-              items:
+              claims:
                 type: object
-            classifications_cpc:
-              type: array
-              items:
+                properties:
+                  claim_text:
+                    type: string
+                  claims:
+                    type: string
+                  lang:
+                    type: string
+              description:
                 type: object
-        abstract:
-          type: array
-          items:
-            type: object
-        claims:
-          type: array
-          items:
-            type: object
-        families:
+                properties:
+                  text:
+                    type: string
+                  lang:
+                    type: string
+              publication_type:
+                type: string
+    AggregationRequestPatent:
+      type: object
+      properties:
+        query:
           type: object
-    PatentRequest:
-      allOf:
-      - $ref: '#/components/schemas/SearchRequestBase'
-      - type: object
-        properties:
-          group_by:
+          example:
+            match:
+              title: Malaria
+        aggregations:
+          type: object
+          example:
+            publication_types:
+              cardinality:
+                field: publication_type
+        size:
+          type: integer
+          example: 0
+          description: Number of items per page
+    PatentSearchRequest:
+      type: object
+      properties:
+        query:
+          type: object
+          example:
+            match:
+              title: Fidget Spinner
+          description: Json query object
+        size:
+          type: integer
+          example: 5
+          description: Number of items per page
+        from:
+          type: integer
+          example: 0
+          description: Offset from the first result
+        include:
+          type: array
+          example:
+          - biblio.invention_title
+          - legal_status
+          - biblio.priority_claims
+          description: Fields to be included in result
+          items:
             type: string
-            description: Group results by patent family (e.g. "family").
-          expand_by:
+        sort:
+          type: array
+          example:
+          - created: desc
+          - year_published: asc
+          description: Array of object mappings to specify field sorting
+          items:
+            type: object
+        exclude:
+          type: array
+          example: null
+          description: Fields to be excluded from result
+          items:
             type: string
-          language:
-            type: string
-            description: Language code for multi-lingual matching.
-  responses:
-    BadRequest:
-      description: Malformed request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Record not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid token
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    RateLimited:
-      description: Plan quota or rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+        scroll:
+          type: string
+          example: null
+          description: Scroll context time in minute (e.g. 1m)
+        scroll_id:
+          type: string
+          description: For scroll based pagination, provide scroll_id from previous response body.
+          example: null
+      title: PatentSearchRequest
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: API token issued from the Lens user profile (Plans & Tokens).
+    Authorisation:
+      type: apiKey
+      name: Authorization
+      description: Your access token created from your Lens user profile page
+      in: header
+externalDocs:
+  description: Privacy Policy
+  url: https://about.lens.org/policies/#privacypolicy

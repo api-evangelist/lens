@@ -78,6 +78,26 @@ apis:
     url: https://docs.api.lens.org/
   - type: SwaggerUI
     url: https://api.lens.org/swagger-ui.html
+- aid: lens:lens-bulk-api
+  name: Lens Bulk API
+  description: Bulk files Operations
+  humanURL: https://docs.api.lens.org/
+  baseURL: https://api.lens.org
+  tags:
+  - bulk
+  properties:
+  - type: OpenAPI
+    url: openapi/lens-bulk-api-openapi.yml
+- aid: lens:lens-collections-api
+  name: Lens Collections API
+  description: Collection Operations
+  humanURL: https://docs.api.lens.org/
+  baseURL: https://api.lens.org
+  tags:
+  - collections
+  properties:
+  - type: OpenAPI
+    url: openapi/lens-collections-api-openapi.yml
 common:
   - type: RateLimits
     url: rate-limits/lens-rate-limits.yml

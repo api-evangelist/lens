@@ -1,0 +1,234 @@
+openapi: 3.2.0
+info:
+  description: 'This service provides access to the full corpus of Lens scholarly works and Patent documents using the flexibility and convenience of a REST API. The versioned API allows you to combine and perform several search operations to programmatically retrieve results. The API documentation provides guidelines for getting you started with the API and details the request/response schema with examples.
+
+
+    The Lens uses token-based API authentication. You can request access to the Lens Scholarly API, Lens Patent API or PatSeq Bulk Downloads and manage your access tokens from your Lens user profile.'
+  version: ''
+  title: Lens Bulk API
+  license:
+    name: Terms of Use
+    url: https://about.lens.org/lens-api-terms-of-use/
+tags:
+- name: Bulk
+  description: Bulk files Operations
+paths:
+  /bulk/scholarly/releases:
+    get:
+      security:
+      - Authorisation: []
+      tags:
+      - Bulk
+      summary: Get scholar bulk releases
+      operationId: bulk_get_scholar_releases
+      responses:
+        '200':
+          description: Valid response from the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScholarlyPublicBulkInfoFiles'
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+  /bulk/patent/releases:
+    get:
+      security:
+      - Authorisation: []
+      tags:
+      - Bulk
+      summary: Get patent bulk releases
+      operationId: bulk_get_patent_releases
+      responses:
+        '200':
+          description: Valid response from the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatentPublicBulkInfoFiles'
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+  /bulk/scholarly/release:
+    get:
+      security:
+      - Authorisation: []
+      tags:
+      - Bulk
+      summary: Get scholar bulk release
+      operationId: bulk_get_scholar_release
+      responses:
+        '200':
+          description: Valid response from the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScholarlyPublicBulkFile'
+        '204':
+          description: No Content
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+  /bulk/patent/release:
+    get:
+      security:
+      - Authorisation: []
+      tags:
+      - Bulk
+      summary: Get patent bulk release
+      operationId: bulk_get_patent_release
+      responses:
+        '200':
+          description: Valid response from the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatentPublicBulkFile'
+        '204':
+          description: No Content
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+  /bulk/download/{downloadAccessKey}:
+    get:
+      security:
+      - Authorisation: []
+      tags:
+      - Bulk
+      summary: Download release file
+      operationId: bulk_download_file
+      parameters:
+      - in: path
+        name: downloadAccessKey
+        required: true
+        description: downloadAccessKey acquired from the release endpoint
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Data bytes
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+components:
+  schemas:
+    PatentPublicBulkFile:
+      allOf:
+      - $ref: '#/components/schemas/PublicBulkInfoFile'
+      - type: object
+        properties:
+          bulkDataProduct:
+            example: PATENT
+          fileName:
+            example: patent-202426-e7ba7cf3-9ecc-4277-a2b9-9bf75eba1c6d.jsonl.gz
+    ScholarlyPublicBulkFile:
+      allOf:
+      - $ref: '#/components/schemas/PublicBulkInfoFile'
+      - type: object
+        properties:
+          bulkDataProduct:
+            example: SCHOLARLY
+          fileName:
+            example: scholarly-202426-e7ba7cf3-9ecc-4277-a2b9-9bf75eba1c6d.jsonl.gz
+    PatentPublicBulkInfoFiles:
+      type: object
+      properties:
+        snapshot:
+          type: object
+          $ref: '#/components/schemas/PatentPublicBulkFile'
+        delta:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/PatentPublicBulkFile'
+    PublicBulkInfoFile:
+      type: object
+      properties:
+        bulkDataProduct:
+          type: string
+          description: data product
+        dataVersion:
+          type: string
+          example: 202424
+          description: data release version
+        precursorDataVersion:
+          type: string
+          example: 202424
+          description: previous data release version in case of delta
+        records:
+          type: integer
+          example: 100000
+          description: Number of records in this file release
+        checksums:
+          type: object
+          properties:
+            crc32c:
+              example: taq1GQ==
+              type: string
+            crc32:
+              example: iYSjTg==
+              type: string
+            md5:
+              example: 765e80bd2e6ba51dbd0eef58389a086c
+              type: string
+            sha1:
+              example: c10ae676cb00308b3c1548f09a9cfc1fcc6a1129
+              type: string
+            sha512:
+              example: bfb60e01ac146a8b18e090ac183b294af5f14bfff9fffb479d2f2b40323cd686
+              type: string
+          description: Checksum to validate integrity of the downloaded file
+        fileName:
+          type: string
+        firstRecordId:
+          type: string
+          example: 000-200-000-994-866
+          description: First record Lens Id
+        lastRecordId:
+          type: string
+          example: 199-999-999-270-421
+          description: Last record Lens Id
+        dateProcessed:
+          type: string
+          format: date
+          example: '2024-07-03'
+          description: Date this release was processed
+        downloadAccessKey:
+          type: string
+          example: Xw_eu9fFQ0_2ffj6IimtRWSaG_...
+          description: Key to download this bulk using endpoint /bulk/download/{downloadAccessKey}
+        size:
+          type: string
+          example: 299611493018
+          description: Compressed size
+        rawSize:
+          type: string
+          example: 965612327943
+          description: Uncompressed size
+      discriminator:
+        propertyName: bulkDataProduct
+    ScholarlyPublicBulkInfoFiles:
+      type: object
+      properties:
+        snapshot:
+          type: object
+          $ref: '#/components/schemas/ScholarlyPublicBulkFile'
+        delta:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/ScholarlyPublicBulkFile'
+  securitySchemes:
+    Authorisation:
+      type: apiKey
+      name: Authorization
+      description: Your access token created from your Lens user profile page
+      in: header
+externalDocs:
+  description: Privacy Policy
+  url: https://about.lens.org/policies/#privacypolicy

@@ -1,0 +1,12 @@
+{
+ "url": "https://api.lens.org/swagger.yaml",
+ "final": "https://api.lens.org/swagger.yaml",
+ "status": 200,
+ "content_type": "application/octet-stream;charset=UTF-8",
+ "bytes": 38804,
+ "sha256": "4212453c4c6a877b91b27e6a18836b810645479f420471d97229a6625afe35a3",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}

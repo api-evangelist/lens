@@ -1,285 +1,445 @@
 openapi: 3.2.0
 info:
+  description: 'This service provides access to the full corpus of Lens scholarly works and Patent documents using the flexibility and convenience of a REST API. The versioned API allows you to combine and perform several search operations to programmatically retrieve results. The API documentation provides guidelines for getting you started with the API and details the request/response schema with examples.
+
+
+    The Lens uses token-based API authentication. You can request access to the Lens Scholarly API, Lens Patent API or PatSeq Bulk Downloads and manage your access tokens from your Lens user profile.'
+  version: ''
   title: Lens Scholarly API
-  description: The Lens API provides programmatic access to the full corpus of Lens scholarly works and patents using a REST interface. The API supports rich Elasticsearch-style query DSL for searching scholarly publications and global patent records, with cursor-based pagination, sorting, and field projection. Authentication is via a bearer token issued from the Lens user profile.
-  version: '1.0'
-  contact:
-    name: Lens API Support
-    url: https://docs.api.lens.org/
   license:
-    name: Lens API Terms
-    url: https://www.lens.org/lens/terms-and-conditions
-servers:
-- url: https://api.lens.org
-  description: Lens production API
-security:
-- bearerAuth: []
+    name: Terms of Use
+    url: https://about.lens.org/lens-api-terms-of-use/
 tags:
-- name: Scholarly
-  description: Search and retrieve scholarly works.
+- name: scholarly
+  description: Scholarly Operations
 paths:
   /scholarly/search:
+    post:
+      security:
+      - Authorisation: []
+      tags:
+      - scholarly
+      summary: Search scholarly result
+      operationId: search
+      responses:
+        '200':
+          description: Valid response from the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScholarApiResponse'
+        '204':
+          description: No Content
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScholarlySearchRequest'
+        description: Search Request Object
+        required: true
     get:
       tags:
-      - Scholarly
-      summary: Search scholarly works (GET)
-      description: Search the Lens scholarly works index using URL query parameters. Suitable for simple keyword searches and small result sets. Use the POST variant for complex queries and cursor pagination.
+      - scholarly
+      summary: Get scholarly result
+      operationId: search_get
       parameters:
-      - name: query
+      - name: token
         in: query
         required: true
-        description: Lucene-style query string (e.g. "title:graphene AND year:2024").
+        schema:
+          type: string
+      - name: query
+        in: query
+        description: Search Query (e.g. Malaria)
+        required: true
         schema:
           type: string
       - name: size
         in: query
-        description: Number of records per page (max 1000 for Patents/Scholarly subject to plan).
+        description: Result size
+        required: false
         schema:
           type: integer
-          default: 20
-          minimum: 1
       - name: from
         in: query
-        description: Offset for offset/size pagination. Cannot exceed 10000 in total.
+        description: Offset from the first result
+        required: false
         schema:
           type: integer
-          default: 0
-      - name: sort
-        in: query
-        description: Comma-separated sort directives (e.g. "desc(patent_citation_count)").
-        schema:
-          type: string
       - name: include
         in: query
-        description: Comma-separated list of fields to include in the response.
+        description: Fields to include in response(e.g. title,date_published)
+        required: false
         schema:
           type: string
       - name: exclude
         in: query
-        description: Comma-separated list of fields to exclude from the response.
+        description: Fields to exclude in response (e.g. title,date_published)
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: Sort fields (e.g. desc(date_published),asc(created))
+        required: false
         schema:
           type: string
       responses:
         '200':
-          description: Successful response
+          description: Valid response from the server
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ScholarlyResponse'
+                $ref: '#/components/schemas/ScholarApiResponse'
+        '204':
+          description: No Content
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Malformed request or incorrect fields/values provided
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
         '429':
-          $ref: '#/components/responses/RateLimited'
-      operationId: getScholarlySearch
-      x-operation-id-source: derived
+          description: You have exceeded the number of allowed calls
+  /scholarly/aggregate:
     post:
+      security:
+      - Authorisation: []
       tags:
-      - Scholarly
-      summary: Search scholarly works (POST)
-      description: Submit a structured Elasticsearch-style query against the Lens scholarly works index. Supports term, terms, match, match_phrase, range, bool, and query_string queries, plus cursor-based pagination via the `scroll` and `scroll_id` parameters.
+      - scholarly
+      summary: Scholarly aggregations search
+      operationId: aggregate_scholarly
+      responses:
+        '200':
+          description: Valid response from the server
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ScholarlyRequest'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScholarlyResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '429':
-          $ref: '#/components/responses/RateLimited'
-      operationId: postScholarlySearch
-      x-operation-id-source: derived
-  /scholarly/{lens_id}:
-    get:
-      tags:
-      - Scholarly
-      summary: Get a scholarly work by Lens ID
-      description: Retrieve a single scholarly work by its unique Lens identifier.
-      parameters:
-      - name: lens_id
-        in: path
+              $ref: '#/components/schemas/AggregationRequestScholarly'
+        description: Search and Aggregation Request Object
         required: true
-        description: Unique Lens identifier for the scholarly work.
-        schema:
-          type: string
+  /schema/scholarly:
+    get:
+      security:
+      - Authorisation: []
+      tags:
+      - scholarly
+      summary: Get scholarly response schema
+      operationId: schema_scholarly
       responses:
         '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScholarlyWork'
+          description: Valid response from the server
         '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      operationId: getScholarlyByLensId
-      x-operation-id-source: derived
+          description: Authentication credentials might be incorrect or missing
 components:
   schemas:
-    ScholarlyResponse:
-      allOf:
-      - $ref: '#/components/schemas/SearchResponseBase'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/ScholarlyWork'
-    SearchRequestBase:
+    AggregationRequestScholarly:
       type: object
       properties:
         query:
-          description: Elasticsearch-style query DSL object.
           type: object
-          additionalProperties: true
-        sort:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        include:
-          type: array
-          items:
-            type: string
-        exclude:
-          type: array
-          items:
-            type: string
+          example:
+            match:
+              title: Malaria
+        aggregations:
+          type: object
+          example:
+            publication_types:
+              cardinality:
+                field: publication_type
         size:
           type: integer
-          default: 20
+          example: 0
+          description: Number of items per page
+    ScholarlySearchRequest:
+      type: object
+      properties:
+        query:
+          type: object
+          example:
+            match:
+              title: Malaria
+          description: Json query object
+        size:
+          type: integer
+          example: 5
+          description: Number of items per page
         from:
           type: integer
-          default: 0
+          example: 0
+          description: Offset from the first result
+        include:
+          type: array
+          example:
+          - title
+          - lens_id
+          - patent_citations_count
+          description: Fields to be included in result
+          items:
+            type: string
+        sort:
+          type: array
+          example:
+          - created: desc
+          - year_published: asc
+          description: Array of object mappings to specify field sorting
+          items:
+            type: object
+        exclude:
+          type: array
+          example: null
+          description: Fields to be excluded from result
+          items:
+            type: string
         scroll:
           type: string
-          description: Lifespan for cursor-based pagination (e.g. "1m").
+          example: null
+          description: Scroll context time in minute (e.g. 1m)
         scroll_id:
           type: string
-          description: Cursor returned by a previous response for pagination.
-        min_score:
-          type: number
-        stemming:
-          type: boolean
-          default: true
-        regex:
-          type: boolean
-          default: false
-      required:
-      - query
-    ScholarlyRequest:
-      allOf:
-      - $ref: '#/components/schemas/SearchRequestBase'
-    SearchResponseBase:
+          description: For scroll based pagination, provide scroll_id from previous response body.
+          example: null
+      title: ScholarlySearchRequest
+    ScholarApiResponse:
       type: object
       properties:
         total:
           type: integer
+          description: Total number of search results exists.
         results:
           type: integer
-        scroll_id:
-          type: string
+          description: Number of results in this response.
         data:
           type: array
-          items:
-            type: object
-            additionalProperties: true
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        code:
-          type: integer
-    ScholarlyWork:
-      type: object
-      description: A scholarly work record (Lens scholarly schema v1.6.8).
-      properties:
-        lens_id:
-          type: string
-        publication_type:
-          type: string
-        title:
-          type: string
-        publication_year:
-          type: integer
-        authors:
-          type: array
+          description: List of scholarly records
           items:
             type: object
             properties:
-              first_name:
+              patent_citations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    lens_id:
+                      type: string
+              patent_citations_count:
+                type: integer
+              lens_id:
                 type: string
-              last_name:
+              alias_lens_ids:
+                type: array
+                items:
+                  type: string
+              created:
                 type: string
-              orcid:
+              open_access:
+                type: object
+                properties:
+                  license:
+                    type: string
+                  colour:
+                    type: string
+              publication_type:
                 type: string
-        source:
-          type: object
-          properties:
-            title:
-              type: string
-            issn:
-              type: array
-              items:
+              publication_supplementary_type:
+                type: array
+                items:
+                  type: string
+              authors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    initials:
+                      type: string
+                    affiliations:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          grid_id:
+                            type: string
+                          country_code:
+                            type: string
+                    ids:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          value:
+                            type: string
+              title:
                 type: string
-            publisher:
-              type: string
-        external_ids:
-          type: array
-          items:
-            type: object
-            properties:
-              type:
+              volume:
                 type: string
-              value:
+              issue:
                 type: string
-        abstract:
-          type: string
-        scholarly_citations_count:
-          type: integer
-        patent_citations_count:
-          type: integer
-  responses:
-    BadRequest:
-      description: Malformed request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Record not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid token
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    RateLimited:
-      description: Plan quota or rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+              languages:
+                type: array
+                items:
+                  type: string
+              references:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    lens_id:
+                      type: string
+              keywords:
+                type: array
+                items:
+                  type: string
+              mesh_terms:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    mesh_heading:
+                      type: string
+                    qualifier_name:
+                      type: string
+                    mesh_id:
+                      type: string
+                    qualifier_id:
+                      type: string
+              chemicals:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    substance_name:
+                      type: string
+                    registry_number:
+                      type: string
+                    mesh_id:
+                      type: string
+              clinical_trials:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    registry:
+                      type: string
+              fields_of_study:
+                type: array
+                items:
+                  type: string
+              funding:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    org:
+                      type: string
+                    funding_id:
+                      type: string
+                    country:
+                      type: string
+              source_urls:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    url:
+                      type: string
+              abstract:
+                type: string
+              year_published:
+                type: integer
+              references_count:
+                type: integer
+              scholarly_citations_count:
+                type: integer
+              external_ids:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    value:
+                      type: string
+              start_page:
+                type: string
+              end_page:
+                type: string
+              source:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  type:
+                    type: string
+                  publisher:
+                    type: string
+                  issn:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        value:
+                          type: string
+                  country:
+                    type: string
+                  asjc_codes:
+                    type: array
+                    items:
+                      type: string
+                  asjc_subjects:
+                    type: array
+                    items:
+                      type: string
+              scholarly_citations:
+                type: array
+                items:
+                  type: string
+              author_count:
+                type: integer
+              date_published:
+                type: string
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: API token issued from the Lens user profile (Plans & Tokens).
+    Authorisation:
+      type: apiKey
+      name: Authorization
+      description: Your access token created from your Lens user profile page
+      in: header
+externalDocs:
+  description: Privacy Policy
+  url: https://about.lens.org/policies/#privacypolicy
